@@ -190,14 +190,18 @@
     onSnapshot(collection(db, "numbers"), snapshot => {
       RAFFLE.states.clear();
       snapshot.forEach(item => RAFFLE.states.set(Number(item.id), item.data()));
-      RAFFLE.initialized = snapshot.size === RAFFLE.total;
+      RAFFLE.initialized = snapshot.size >= RAFFLE.total;
       $("#systemStatus").classList.toggle("hidden", RAFFLE.initialized);
       [...selected].forEach(number => { if(RAFFLE.states.get(number)?.status !== "available") selected.delete(number); });
       updateProgress(); renderNumbers(); updateSelection();
     });
     onSnapshot(doc(db, "settings", "raffle"), snapshot => {
-      RAFFLE.closed = snapshot.exists() && snapshot.data().closed === true;
-      renderNumbers();
+      const settings = snapshot.exists() ? snapshot.data() : {};
+      RAFFLE.closed = settings.closed === true;
+      if(Number.isInteger(settings.totalNumbers) && settings.totalNumbers >= 800) RAFFLE.total = settings.totalNumbers;
+      RAFFLE.initialized = RAFFLE.states.size >= RAFFLE.total;
+      $("#systemStatus").classList.toggle("hidden", RAFFLE.initialized);
+      updateProgress(); renderNumbers(); updateSelection();
     });
     onSnapshot(collection(db, "draws"), snapshot => {
       const results = new Map(); snapshot.forEach(item => results.set(item.id, item.data()));
