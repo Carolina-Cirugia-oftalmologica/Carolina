@@ -181,7 +181,8 @@
         ? `Método: ${method}. Me comprometo a pagar el ${promiseDate}.`
         : `Método: ${method}. Ya realicé el pago.`;
       const receiptDetail = method === "Nequi" && timing === "Ya pagué" ? " Adjunto enviaré el comprobante en este chat." : "";
-      const message = `Hola Carolina, soy ${name}. Mi reserva es ${reservationId}. Números: ${numbers.join(", ")}. Total: ${total}. Mi WhatsApp es ${phone}. ${paymentDetail}${receiptDetail}`;
+      const reservationCode = reservationId.slice(0, 6).toUpperCase();
+      const message = `Hola Carolina, soy ${name}. Mi reserva es ${reservationCode}. Números: ${numbers.join(", ")}. Total: ${total}. Mi WhatsApp es ${phone}. ${paymentDetail}${receiptDetail}`;
       window.location.href = `https://wa.me/${RAFFLE.phone}?text=${encodeURIComponent(message)}`;
     });
 
